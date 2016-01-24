@@ -1,0 +1,187 @@
+/**
+ * Pinar Demetci
+ * Computational Biology - Project #2 - Task 1
+ * 24 September 2015
+ * Necessary corrections are made to SequenceOps file and uploaded to the server, as well. 
+ */
+import java.io.BufferedReader; 
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*; 
+
+public class Matrix {
+public static void main(String args[]){
+	String sequence = SequenceOps.sequenceFromFastaFile(args[0]);
+	List<String> hexamers = Hexamers(sequence);
+	System.out.println("Maximum scoring TATA box candidate is" + "\t" + Maximum(sequence));
+	System.out.println("Log likelihood of hexamers are" + "\t" + TATAA_candidates(hexamers));
+}
+
+/*Helper Function
+ * Creates a HashMap of TATA box probabilities associated with sequence and location. 
+ */
+public static Map<Character,Map<Integer,Double>> TATA_prob(){
+	Map<Integer,Double> Aprob= new HashMap<Integer,Double>();
+	     Aprob.put(1, 0.04);
+	     Aprob.put(2, 0.09);
+	     Aprob.put(3, 0.0);
+	     Aprob.put(4, 0.95);
+	     Aprob.put(5, 0.66);
+	     Aprob.put(6, 0.97);
+
+	Map<Integer,Double> Cprob= new HashMap<Integer,Double>();
+		Cprob.put(1, 0.1);
+		Cprob.put(2, 0.01);
+		Cprob.put(3, 0.0);
+		Cprob.put(4, 0.0);
+		Cprob.put(5, 0.01);
+		Cprob.put(6, 0.0);
+
+	Map<Integer,Double> Gprob= new HashMap<Integer,Double>();
+		Gprob.put(1, 0.03);
+		Gprob.put(2, 0.01);
+		Gprob.put(3, 0.0);
+		Gprob.put(4, 0.0);
+		Gprob.put(5, 0.01);
+		Gprob.put(6, 0.03);
+			     
+	Map<Integer,Double> Tprob= new HashMap<Integer,Double>();
+		Tprob.put(1, 0.83);
+		Tprob.put(2, 0.08);
+		Tprob.put(3, 1.0);
+		Tprob.put(4, 0.05);
+		Tprob.put(5, 0.32);
+		Tprob.put(6, 0.0);
+
+	
+	Map<Character, Map<Integer,Double>> hexamer_prob = new HashMap<Character, Map<Integer,Double>>();
+		hexamers.put('A', Aprob);
+		hexamers.put('C', Cprob);
+		hexamers.put('G', Gprob);
+		hexamers.put('T', Tprob);
+		
+		
+	return hexamer_prob;
+	}
+/*Helper Function
+ * Creates a HashMap of frequencies of nucleotides in certain locations of a hexamer. 
+ */
+public static Map<Character,Map<Integer,Double>> Randomness (){
+	Map<Integer,Double> Aprob= new HashMap<Integer,Double>();
+	     Aprob.put(1, 0.31);
+	     Aprob.put(2, 0.31);
+	     Aprob.put(3, 0.31);
+	     Aprob.put(4, 0.31);
+	     Aprob.put(5, 0.31);
+	     Aprob.put(6, 0.31);
+
+	Map<Integer,Double> Cprob= new HashMap<Integer,Double>();
+		Cprob.put(1, 0.19);
+		Cprob.put(2, 0.19);
+		Cprob.put(3, 0.19);
+		Cprob.put(4, 0.19);
+		Cprob.put(5, 0.19);
+		Cprob.put(6, 0.19);
+
+	Map<Integer,Double> Gprob= new HashMap<Integer,Double>();
+		Gprob.put(1, 0.19);
+		Gprob.put(2, 0.19);
+		Gprob.put(3, 0.19);
+		Gprob.put(4, 0.19);
+		Gprob.put(5, 0.19);
+		Gprob.put(6, 0.19);
+			     
+	Map<Integer,Double> Tprob= new HashMap<Integer,Double>();
+		Tprob.put(1, 0.31);
+		Tprob.put(2, 0.31);
+		Tprob.put(3, 0.31);
+		Tprob.put(4, 0.31);
+		Tprob.put(5, 0.31);
+		Tprob.put(6, 0.31);
+
+	
+	Map<Character, Map<Integer,Double>> randomness = new HashMap<Character, Map<Integer,Double>>();
+		randomness.put('A', Aprob);
+		randomness.put('C', Cprob);
+		randomness.put('G', Gprob);
+		randomness.put('T', Tprob);
+		
+		
+	return randomness;
+	}
+/* Helper Function
+ * Takes in a string of dna and outputs a list of its hexamers.
+ */
+
+public static List<String> Hexamers(String dna){
+	List<String> hexas = new ArrayList<String>();
+	for (int i=0; i<dna.length()-5; i++){
+		hexas.add(dna.substring(i, i+6));
+	}
+	return hexas
+}
+
+/* Helper Function
+ * Takes in a string of dna and outputs the probability for its hexamers to be a TATA box. 
+ */
+
+public static Map<String, Double> TATAA_score(List<String> hexas){
+	Map<Character,Map<Integer,Double>> TATA_Prob = TATA_prob();
+	Map<String, Double> candidates= new HashMap<String, Double>();
+
+	for (String a: hexas){
+		double all_probability=1.0;
+		for (int i=0; i<a.length(); i++){
+			double prob = (TATA_Prob.get(a.charAt(i)).get(i+1));
+			all_probability = all_probability*prob;
+		}
+		candidates.put(a, all_probability);
+	}
+	return candidates;
+}
+
+/* Task 2 - Finding the hexamer with highest score for being a "TATA box"
+ * Takes in a string of dna and outputs the hexamer that is most likely to be a TATA box, along with its score.
+ * Does not account for frequencies of the nucleotides. 
+ */
+
+public static Map<String, Double> Maximum (List<String> hexas){
+	Map<String, Double> candidates = TATAA_score(hexas);
+	double maximum = Collections.max(candidates.values());
+	for (String key: candidates.keySet()){
+		if (candidates.get(key) == maximum){
+			candidates.clear();
+			candidates.put(key, maximum);
+		}
+	}
+	
+	return candidates;
+	}
+/* Task 2 - Hexamers with Log-Likelihood of being a TATA box
+ * Takes in a string of dna and outputs the hexamers with log-likelihood of being a TATA box.
+ * Accounts for nucleotide frequencies
+ */
+public static Map<String, Double> TATAA_candidates(List<String> hexas){
+	Map<String, Double> TATA_probability = TATAA_score(hexas);
+	Map<Character,Map<Integer,Double>> Randomness = Randomness(dna);
+	Map<String, Double> candidates= new HashMap<String, Double>();
+
+	for (String a: hexas){
+		double all_randomness=1.0;
+		double log_likelihood;
+		double likelihood;
+		double TATA_score;
+		for (int i=0; i<a.length(); i++){
+			double rand = (Randomness.get(a.charAt(i)).get(i+1));
+			all_randomness = all_randomness*rand;
+		}
+		TATA_score = TATA_probability.get(a);
+		likelihood = TATA_score/ all_randomness;
+		log_likelihood = Math.log(likelihood);
+		candidates.put(a, log_likelihood);
+	}
+	return candidates;
+	
+}
+}
+

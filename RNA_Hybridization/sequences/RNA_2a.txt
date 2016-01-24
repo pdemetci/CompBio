@@ -1,0 +1,2 @@
+> Sample RNA hybridizing sequence 2a
+AGGCAUUCAGAAUG

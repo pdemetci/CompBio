@@ -1,0 +1,11 @@
+> Sequence 1
+GCTGACTA
+
+> Sequence 2
+TACTAGGT
+
+> Sequence 3
+CCTACTGG
+
+> Sequence 4
+AGGGTCTA

@@ -1,0 +1,2 @@
+> Sample RNA hybridizing sequence 1b
+GAACCAAGCGAUUCUCGUGCCUCG
