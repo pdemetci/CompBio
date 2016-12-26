@@ -1,8 +1,8 @@
-/**
- * Pinar Demetci
- * Computational Biology - Project #2 - Task 1
- * 24 September 2015
- * Necessary corrections are made to SequenceOps file and uploaded to the server, as well. 
+/* author: Pinar Demetci
+ * A Java script to identify open reading frames in DNA sequences. 
+ * Takes in an input argument filename.fasta, which is a FASTA file containing a genomic sequence
+ * Currently, ORF Finder has a quadratic time complexity but I'm currently looking into splice graphs and Boyer–Moore string search algorithm 
+ * to potentially improve the time complexity. Will update soon.
  */
 
 import java.io.BufferedReader; 
@@ -12,32 +12,40 @@ import java.util.*;
 
 public class ORF_Finder {
 	public static void main(String args[]){
-	System.out.println("Calculating...");
-	String sequence = SequenceOps.sequenceFromFastaFile(args[0]);
-	String randomSequence = SequenceOps.randomSequence(sequence.length(), SequenceOps.GC_content(sequence));
-	List<String> ORF_List = ORF_List(sequence);
-	List<String> Aminoacids = ORF_translation(ORF_List);
-	List<String> RandomORF_List = ORF_List(randomSequence);
-	List<String> Random_Aminoacids = ORF_translation(RandomORF_List);
-	System.out.println("**************************************************************");
-	System.out.println("***** Genomic Sequence Read-In From Fasta Formatted File *****");
-	System.out.println("**************************************************************");
-	System.out.println("Number of ORFs is:"+ "\t" + ORF_Number(ORF_List));
-	System.out.println("Number of ORFs at least 300nt is:"+"\t" + ORF_300n (ORF_List));
-	System.out.println("Number of ORFs with specified amino acid distribution is:"+"\t" + ORF_Dist(Aminoacids));
-	System.out.println("Number of ORFs with Kozak sequence is:" + "\t" + Kozak_find(sequence));
-	System.out.println("Number of ORFs with likely protein coding codons is:" + "\t" + Coding_ORF((ORF_List)));
-	System.out.println("**************************************************************");
-	System.out.println("*** Random Sequence With Same Length And GC-Content As Sequence Read-In From File ***");
-	System.out.println("**************************************************************");
-	System.out.println("Number of ORFs is:"+ "\t" + ORF_Number(RandomORF_List));
-	System.out.println("Number of ORFs at least 300nt is:"+"\t" + ORF_300n(RandomORF_List));
-	System.out.println("Number of ORFs with specified amino acid distribution is:" + "\t" + ORF_Dist(Random_Aminoacids));
-	System.out.println("Number of ORFs with Kozak sequence is:" + "\t" + Kozak_find(randomSequence));
-	System.out.println("Number of ORFs with likely protein coding codons is:" + "\t" + Coding_ORF((RandomORF_List)));
+		
+//		  Check how many arguments were passed in.
+	    if(args.length == 0)
+	    {
+	        System.out.println("Proper Usage is: java ORF_Finder filename.fasta");
+	        System.exit(0);
+	    }
+	    
+//		File currentDir = new File(".");
+		System.out.println("Calculating...");
+		String sequence = SequenceOps.sequenceFromFastaFile(args[0]);
+		String randomSequence = SequenceOps.randomSequence(sequence.length(), SequenceOps.GC_content(sequence));
+		List<String> ORF_List = ORF_List(sequence);
+		List<String> Aminoacids = ORF_translation(ORF_List);
+		List<String> RandomORF_List = ORF_List(randomSequence);
+		List<String> Random_Aminoacids = ORF_translation(RandomORF_List);
+		System.out.println("______________________________________________________________");
+		System.out.println("_____ Genomic Sequence Read-In From Fasta Formatted File _____");
+		System.out.println("______________________________________________________________");
+		System.out.println("Number of ORFs is:"+ "\t" + ORF_Number(ORF_List));
+		System.out.println("Number of ORFs at least 300nt is:"+"\t" + ORF_300n (ORF_List)); 
+		System.out.println("Number of ORFs with Kozak sequence is:" + "\t" + Kozak_find(sequence));
+		System.out.println("Number of ORFs with likely protein coding codons is:" + "\t" + Coding_ORF((ORF_List)));
+		System.out.println("______________________________________________________________");
+		System.out.println("___ Random Sequence With Same Length And GC-Content As Sequence Read-In From File ___");
+		System.out.println("______________________________________________________________");
+		System.out.println("This is for comparison purposes");
+		System.out.println("Number of ORFs is:"+ "\t" + ORF_Number(RandomORF_List));
+		System.out.println("Number of ORFs at least 300nt is:"+"\t" + ORF_300n(RandomORF_List));
+		System.out.println("Number of ORFs with Kozak sequence is:" + "\t" + Kozak_find(randomSequence));
+		System.out.println("Number of ORFs with likely protein coding codons is:" + "\t" + Coding_ORF((RandomORF_List)));
 	}
 
-/*Helper Function
+/*
  * 	Takes in a dna sequence in String format and returns a HashMap of (initial_index(start codon):initial_index(stop codon))
  */
 	public static Map<Integer,Integer> ORF_Index(String dna){
@@ -55,7 +63,7 @@ public class ORF_Finder {
 		}
 		return ORF;
 	}
-/*Helper Function
+/*
  * 	Takes in a string of dna sequence and returns a list of ORFs
  */
 	public static List<String> ORF_List(String dna){
@@ -74,16 +82,15 @@ public class ORF_Finder {
 		return ORF;
 	}
 	
-/*Task 1
+/*
  * Returns the number of ORFs in a given dna sequence
  */
 	public static int ORF_Number(List<String> ORF){
 		return ORF.size();
 	}
 	
-/*Task 1
- * Takes in a list of ORFs and computes the number of ORFs at least 300 nucleotide.
- * 
+/*
+ * Takes in a list of ORFs and computes the number of ORFs at least 300 nucleotide because most genes are at least 300 nucleotide long.
  */
 	public static int ORF_300n (List<String> ORF){
 		int count = 0;
@@ -95,10 +102,9 @@ public class ORF_Finder {
 		return count;
 	}
 	
-	/*
-	 * Helper Function	
+	/*	
 	 *Translates ORF into aminoacid sequence
-	 *Uses the same translation.txt file from Project 1, except U = T.
+	 *Uses the translation.txt to guide translation.
 	 */
 	
 	public static List<String> ORF_translation(List<String> ORFs){
@@ -110,42 +116,6 @@ public class ORF_Finder {
 	}
 	
 	/*
-	 * Task 1
-	 * Takes in list of aminoacids corresponding to ORFs and returns the number of ORFs that code for proteins containing:
-	 *less than 4% cysteines and less than 4% tryptophans and more than 6% alanines and more than 6% leucines
-	 */
-	public static int ORF_Dist(List<String> AminoAcids){
-		int ORFs=0;
-		for (int i=0; i<AminoAcids.size(); i++){
-			List<String> aa = new ArrayList<String>();
-			aa.add(AminoAcids.get(i));
-			int C_count=0;
-			int W_count=0;
-			int A_count=0;
-			int L_count=0;
-			int size = AminoAcids.get(i).length();
-			for (String a:aa){	
-				if (a=="C"){
-					C_count++;
-				}
-				if (a=="W"){
-					W_count++;
-				}
-				if (a=="A"){
-					A_count++;
-				}
-				if (a=="L"){
-					L_count++;
-				}
-			if ((C_count/size < 0.04) && (W_count/size < 0.04) && (A_count/size > 0.06) && (L_count/size > 0.06)){
-				ORFs++;
-			}
-				
-			}
-		}
-		return ORFs;
-	}
-	/*Task 1
 	 *Takes in a string of dna and returns the number of Kozak sequences. 
 	 */
 	public static int Kozak_find(String dna){
@@ -181,13 +151,14 @@ public class ORF_Finder {
 		    return mapError;
 		}   
 	}
-	/* Task 1 - Coding ORFs
-	 * Takes a list of ORFs and returns the number of ORFs that are likely coding for proteins.
+	/* 
+	 * Takes a list of ORFs and returns the number of ORFs that are likely coding for proteins 
+	 * based on statistics derived from coding sequences in yeast (codonUsage.txt -- can be updated for other species) 
 	 */
 	public static int Coding_ORF(List<String> ORF){
 		int Coding_ORF=0;
-		Map<String, String> CodingMap = FiletoHashMap("/home/pinar/Desktop/codonUsage.txt", 0, 1);
-		Map<String, String> NonCodingMap = FiletoHashMap("/home/pinar/Desktop/codonUsage.txt", 0, 2);
+		Map<String, String> CodingMap = FiletoHashMap(System.getProperty("user.dir")+"/codonUsage.txt", 0, 1);
+		Map<String, String> NonCodingMap = FiletoHashMap(System.getProperty("user.dir")+"/codonUsage.txt", 0, 2);
 		for (String a: ORF){
 			double coding_score=1;
 			double noncoding_score=1;

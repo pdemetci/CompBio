@@ -1,0 +1,65 @@
+Codon	Single Character Amino Acid Code	Amino Acid
+AAA	K      Lysine
+AAC	N      Asparagine
+AAG	K      Lysine
+AAT	N      Asparagine
+ACA	T      Threonine
+ACC	T      Threonine
+ACG	T      Threonine
+ACT	T      Threonine
+AGA	R      Arginine
+AGC	S      Serine
+AGG	R      Arginine
+AGT	S      Serine
+ATA	I      Isoleucine
+ATC	I      Isoleucine
+ATG	M      Methionine
+ATT	I      Isoleucine
+CAA	Q      Glutamine
+CAC	H      Histidine
+CAG	Q      Glutamine
+CAT	H      Histidine
+CCA	P      Proline
+CCC	P      Proline
+CCG	P      Proline
+CCT	P      Proline
+CGA	R      Arginine
+CGC	R      Arginine
+CGG	R      Arginine
+CGT	R      Arginine
+CTA	L      Leucine
+CTC	L      Leucine
+CTG	L      Leucine
+CTT	L      Leucine
+GAA	E      Glutamic Acid
+GAC	D      Aspartic Acid
+GAG	E      Glutamic Acid
+GAT	D      Aspartic Acid
+GCA	A      Alanine
+GCC	A      Alanine
+GCG	A      Alanine
+GCT	A      Alanine
+GGA	G      Glycine
+GGC	G      Glycine
+GGG	G      Glycine
+GGT	G      Glycine
+GTA	V      Valine
+GTC	V      Valine
+GTG	V      Valine
+GTT	V      Valine
+TAA	*      Stop Codon
+TAC	Y      Tyrosine
+TAG	*      Stop Codon
+TAT	Y      Tyrosine
+TCA	S      Serine
+TCC	S      Serine
+TCG	S      Serine
+TCT	S      Serine
+TGA	*      Stop Codon
+TGC	C      Cysteine
+TGG	W      Tryptophan
+TGT	C      Cysteine
+TTA	L      Leucine
+TTC	F      Phenylalanine
+TTG	L      Leucine
+TTT	F      Phenylalanine
